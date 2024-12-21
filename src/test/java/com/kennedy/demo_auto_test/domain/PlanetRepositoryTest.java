@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Optional;
+
 @DataJpaTest
 public class PlanetRepositoryTest {
 
@@ -47,5 +49,25 @@ public class PlanetRepositoryTest {
         testEntityManager.detach(planet);
         planet.setId(null);
         assertThatThrownBy( ()-> planetRepository.save(planet)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void getPlanet_ByExistingId_ReturnsEmpty(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        testEntityManager.detach(planet);
+
+        Optional<Planet> sut = planetRepository.findById(planet.getId());
+
+        assertThat(sut).isNotEmpty();
+        assertThat(sut.get()).isEqualTo(planet);
+
+    }
+
+    @Test
+    public void getPlanet_ByNonExistingId_ReturnsEmpty(){
+
+        Optional<Planet> sut = planetRepository.findById(1L);
+
+        assertThat(sut).isEmpty();
     }
 }
