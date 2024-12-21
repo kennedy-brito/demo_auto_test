@@ -10,7 +10,6 @@ public class PlanetService {
     private PlanetRepository planetRepository;
 
     public Planet create(Planet planet){
-        System.out.println(planet);
         return planetRepository.save(planet);
     }
 }
