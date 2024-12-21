@@ -2,10 +2,14 @@ package com.kennedy.demo_auto_test.web.controller;
 
 import com.kennedy.demo_auto_test.domain.Planet;
 import com.kennedy.demo_auto_test.domain.PlanetService;
+import jakarta.websocket.server.PathParam;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/planets")
@@ -36,5 +40,15 @@ public class PlanetController {
         ).orElseGet(
                 () -> ResponseEntity.notFound().build()
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Planet>> getPlanetsWithFilters(
+            @RequestParam(required = false) String climate,
+            @RequestParam(required = false) String terrain){
+
+        List<Planet> planets = planetService.list(terrain, climate);
+
+        return ResponseEntity.ok(planets);
     }
 }
