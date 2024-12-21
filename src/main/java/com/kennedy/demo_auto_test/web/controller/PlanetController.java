@@ -29,4 +29,12 @@ public class PlanetController {
         );
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Planet> getByName(@PathVariable String name){
+        return planetService.findByName(name).map(
+                (p) -> ResponseEntity.ok(p)
+        ).orElseGet(
+                () -> ResponseEntity.notFound().build()
+        );
+    }
 }

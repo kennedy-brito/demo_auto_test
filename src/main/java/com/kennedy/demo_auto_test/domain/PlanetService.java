@@ -19,4 +19,8 @@ public class PlanetService {
     public Optional<Planet> findById(Long id) {
         return planetRepository.findById(id);
     }
+
+    public Optional<Planet> findByName(String name) {
+        return planetRepository.findByName(name);
+    }
 }
