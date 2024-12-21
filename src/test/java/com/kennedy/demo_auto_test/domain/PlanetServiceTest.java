@@ -3,6 +3,7 @@ package com.kennedy.demo_auto_test.domain;
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -66,6 +67,25 @@ public class PlanetServiceTest {
         when(planetRepository.findById(1L)).thenReturn(Optional.empty());
 
         Optional<Planet> sut = planetService.findById(1L);
+
+        assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnPlanet(){
+        when(planetRepository.findByName("name")).thenReturn(Optional.of(PLANET));
+
+        Optional<Planet> sut = planetService.findByName("name");
+
+        assertThat(sut).isNotEmpty();
+        assertThat(sut.get()).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void getPlanet_ByNonExistingName_ReturnEmpty(){
+        when(planetRepository.findByName(anyString())).thenReturn(Optional.empty());
+
+        Optional<Planet> sut = planetService.findByName("name");
 
         assertThat(sut).isEmpty();
     }
