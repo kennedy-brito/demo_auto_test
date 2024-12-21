@@ -2,6 +2,7 @@ package com.kennedy.demo_auto_test.web.controller;
 
 import com.kennedy.demo_auto_test.domain.Planet;
 import com.kennedy.demo_auto_test.domain.PlanetService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class PlanetController {
     private PlanetService planetService;
 
     @PostMapping
-    public ResponseEntity<Planet> create(@RequestBody Planet planet){
+    public ResponseEntity<Planet> create(@RequestBody @Valid Planet planet){
         Planet planetCreated = planetService.create(planet);
         return ResponseEntity.status(HttpStatus.CREATED).body(planetCreated);
     }
@@ -53,7 +54,7 @@ public class PlanetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id){
+    public ResponseEntity<Void> deleteById(@PathVariable @Valid Long id){
         planetService.remove(id);
 
         return ResponseEntity.noContent().build();

@@ -1,6 +1,7 @@
 package com.kennedy.demo_auto_test.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.io.Serializable;
@@ -15,8 +16,16 @@ public class Planet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+
+    @NotEmpty
+    @Column(unique = true, nullable = false)
     private String name;
+
+    @NotEmpty
+    @Column(nullable = false)
     private String climate;
+
+    @NotEmpty
+    @Column(nullable = false)
     private String terrain;
 }
