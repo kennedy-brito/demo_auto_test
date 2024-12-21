@@ -2,8 +2,7 @@ package com.kennedy.demo_auto_test.domain;
 
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,6 +89,34 @@ public class PlanetServiceTest {
         when(planetRepository.findByName(anyString())).thenReturn(Optional.empty());
 
         Optional<Planet> sut = planetService.findByName("name");
+
+        assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void listPlanets_ReturnsAllPlanets(){
+        List<Planet> planets = new ArrayList<>() {
+            {
+
+                add(PLANET);
+            }
+        };
+
+        Example<Planet> query = QueryBuilder.makeQuery(new Planet(null, null, PLANET.getClimate(), PLANET.getTerrain()));
+
+        when(planetRepository.findAll(query)).thenReturn(planets);
+
+        List<Planet> sut = planetService.list(PLANET.getTerrain(), PLANET.getClimate());
+
+        assertThat(sut).hasSize(1);
+        assertThat(sut.get(0)).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets(){
+        when(planetRepository.findAll(any(Example.class))).thenReturn(Collections.EMPTY_LIST);
+
+        List<Planet> sut = planetService.list(PLANET.getTerrain(),PLANET.getClimate());
 
         assertThat(sut).isEmpty();
     }
