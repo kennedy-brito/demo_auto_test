@@ -3,7 +3,7 @@ package com.kennedy.demo_auto_test.domain;
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -119,5 +119,17 @@ public class PlanetServiceTest {
         List<Planet> sut = planetService.list(PLANET.getTerrain(),PLANET.getClimate());
 
         assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void removePlanet_WithExistingId_doesNotThrowAnyException(){
+        assertThatCode( () -> planetService.remove(1L)).doesNotThrowAnyException();
+    }
+
+    @Test
+    public void removePlanet_WithExistingId_ThrowsException(){
+        doThrow(RuntimeException.class).when(planetRepository).deleteById(anyLong());
+
+        assertThatThrownBy(() -> planetService.remove(1L)).isInstanceOf(RuntimeException.class);
     }
 }
