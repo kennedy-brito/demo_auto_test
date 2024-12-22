@@ -1,16 +1,20 @@
 package com.kennedy.demo_auto_test.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -74,6 +78,7 @@ public class PlanetRepositoryTest {
 
         assertThat(sut).isEmpty();
     }
+
     @Test
     public void getPlanet_ByExistingName_ReturnsEmpty(){
         Planet planet = testEntityManager.persistFlushFind(PLANET);
@@ -91,5 +96,77 @@ public class PlanetRepositoryTest {
         Optional<Planet> sut = planetRepository.findByName("1L");
 
         assertThat(sut).isEmpty();
+    }
+
+    @Test
+    @Sql(scripts = "/import_planets.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/delete_planets.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void listPlanets_ReturnsFilteredPlanets(){
+
+        Planet planet = new Planet(null, null, "temperate", null);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();;
+
+        List<Planet> sut = planetRepository.findAll(Example.of(planet, exampleMatcher));
+
+        assertThat(sut).isNotNull();
+        assertThat(sut).hasSize(1);
+
+        planet = new Planet(null, null, null, "desert");
+
+        exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();;
+
+        sut = planetRepository.findAll(Example.of(planet, exampleMatcher));
+
+        assertThat(sut).isNotNull();
+        assertThat(sut).hasSize(1);
+
+        planet = new Planet(null, null, "arid", "desert");
+
+        exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();;
+
+        sut = planetRepository.findAll(Example.of(planet, exampleMatcher));
+
+        assertThat(sut).isNotNull();
+        assertThat(sut).hasSize(1);
+
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets(){
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase().withIgnoreNullValues();;
+
+        List<Planet> sut = planetRepository.findAll(Example.of(PLANET, exampleMatcher));
+
+        assertThat(sut).isNotNull();
+        assertThat(sut).isEmpty();
+    }
+
+    @Sql(scripts = "/import_planets.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/delete_planets.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Test
+    public void deletePlanet_WithExistingId_DoesntThrowException(){
+
+        Planet planet = testEntityManager.find(Planet.class, 1L);
+
+        assertThat(planet).isNotNull();
+
+        planetRepository.deleteById(1L);
+
+        planet = testEntityManager.find(Planet.class, 1L);
+
+        assertThat(planet).isNull();
+    }
+
+    @Test
+    @Sql(scripts = "/delete_planets.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void deletePlanet_WithNonExistingId_ThrowException(){
+
+        assertThatNoException().isThrownBy(
+                () -> planetRepository.deleteById(1L)
+        );
+
+
     }
 }
