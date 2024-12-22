@@ -1,8 +1,7 @@
 package com.kennedy.demo_auto_test.web;
 
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -98,6 +97,25 @@ public class PlanetControllerTest {
         mockMvc.perform(
                         get("/planets/1")
                 ).andExpect(status().isNotFound());
+
+    }
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanetStatus200() throws Exception {
+
+        when(planetService.findByName(anyString())).thenReturn(Optional.of(PLANET));
+
+        mockMvc.perform(
+                        get("/planets/name/{name}", PLANET.getName())
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(PLANET));
+
+    }
+
+    @Test
+    public void getPlanet_ByNonExistingName_ReturnsNotFound() throws Exception {
+        mockMvc.perform(
+                get("/planets/name/{name}", "any")
+        ).andExpect(status().isNotFound());
 
     }
 }
