@@ -90,3 +90,33 @@ To exclude the method from the analysis you can create the annotation and use it
 public @interface ExcludeFromJacocoGeneratedReport {
 }
 ````
+
+# Mutant tests with pitest
+
+### Configuration
+```xml
+<!--Working with mutant tests-->
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.8.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>0.14</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<targetTests>
+						<param>com.kennedy.demo_auto_test.*Test</param>
+					</targetTests>
+					<excludedClasses>
+                      <param>com.kennedy.demo_auto_test.domain.Planet</param>
+					</excludedClasses>
+				</configuration>
+			</plugin>
+```
+
+### Command
+``.\mvnw test-compile org.pitest:pitest-maven:mutationCoverage``
