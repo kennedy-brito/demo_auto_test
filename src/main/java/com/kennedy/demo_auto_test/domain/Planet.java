@@ -1,5 +1,6 @@
 package com.kennedy.demo_auto_test.domain;
 
+import com.kennedy.demo_auto_test.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -28,4 +29,15 @@ public class Planet implements Serializable {
     @NotEmpty
     @Column(nullable = false)
     private String terrain;
+
+    @ExcludeFromJacocoGeneratedReport
+    @Override
+    public String toString() {
+        return "Planet{" +
+                "climate='" + climate + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", terrain='" + terrain + '\'' +
+                '}';
+    }
 }

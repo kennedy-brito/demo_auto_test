@@ -56,7 +56,7 @@
       <!--file path: 
       *   Match zero or more characters
       **  Match zero or more directories
-      ?   Match a single characte-->
+      ?   Match a single character-->
       <exclude>com/kennedy/demo_auto_test/DemoAutoTestApplication.class</exclude>
 
     </excludes>
@@ -79,3 +79,14 @@
 
 ### Run test and generate report
 ``.\mvnw clean test jacoco:report``
+
+### How to exclude a method from the report
+Sometimes a method is not used during the execution of a app, it may be for debugging purposes like the toString
+
+To exclude the method from the analysis you can create the annotation and use it in the method you want to use
+````java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ExcludeFromJacocoGeneratedReport {
+}
+````
