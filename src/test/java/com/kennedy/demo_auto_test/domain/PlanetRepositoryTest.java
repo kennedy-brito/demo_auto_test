@@ -1,6 +1,8 @@
 package com.kennedy.demo_auto_test.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import static com.kennedy.demo_auto_test.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,8 +10,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 
@@ -21,6 +21,11 @@ public class PlanetRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
+
+    @AfterEach
+    public void afterEach(){
+        PLANET.setId(null);
+    }
 
     @Test
     public void createPlanet_WithValidData_ReturnsPlanet(){
@@ -54,7 +59,6 @@ public class PlanetRepositoryTest {
     @Test
     public void getPlanet_ByExistingId_ReturnsEmpty(){
         Planet planet = testEntityManager.persistFlushFind(PLANET);
-        testEntityManager.detach(planet);
 
         Optional<Planet> sut = planetRepository.findById(planet.getId());
 
