@@ -1,122 +1,66 @@
-# Running tests with Maven
-### Configuration
+<h1 align="center">
+  StarWars Planet API (sw-planet-api)
+</h1>
 
-- surefire
-    ````xml
-    <!-- UNIT TEST-->
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-            <skip>${skipUnitTests}</skip>
-        </configuration>
-    </plugin>
-    ````
-- failsafe
-    ````xml
-    <!-- INTEGRATION TEST-->
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <executions>
-            <execution>
-                <id>integration-tests</id>
-                <goals>
-                    <goal>integration-test</goal>
-                    <goal>verify</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
-    ````
-  
+<p align="center">
+  <a href="#-technologies">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-project">Projeto</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-configuration">Configuração</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-developing">Construir e Executar</a>
+</p>
 
-### Commands
-- Run all tests ``.\mvnw clean verify``
+<p align="center">
+  <img alt="Licença" src="https://img.shields.io/static/v1?label=Licença&message=MIT&color=8257E5&labelColor=000000">
+  <img src="https://img.shields.io/static/v1?label=Curso na Udemy&message=Testes automatizados na prática com Spring Boot&color=8257E5&labelColor=000000" alt="Testes automatizados na prática com Spring Boot" />
+</p>
 
-- Run unit tests and skip IT test ``.\mvnw clean verify -DskipITs`` | `.\mvnw clean test`
+<br>
 
-- Run IT tests and skip unit test ``.\mvnw clean verify -DskipUnitTests=true``
+## ✨ Technologies
 
-# Code Coverage
-### Configuration
-- Jacoco
-````xml
-<!-- Code Coverage -->
-<plugin>
-  <groupId>org.jacoco</groupId>
-  <artifactId>jacoco-maven-plugin</artifactId>
-  <version>0.8.12</version>
-  <!--
-  If you want to exclude some file from the analyses 
-  you should configure it using the exclude tag
-  -->
-  <configuration>
-    <excludes>
-      <!--file path: 
-      *   Match zero or more characters
-      **  Match zero or more directories
-      ?   Match a single character-->
-      <exclude>com/kennedy/demo_auto_test/DemoAutoTestApplication.class</exclude>
+- [Mysql](https://dev.mysql.com/downloads/mysql/)
+- [Java](https://www.oracle.com/java/technologies/downloads/)
+- [Maven](https://maven.apache.org/download.cgi)
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [Spring Testing](https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testing-introduction)
+- [JUnit 5](https://junit.org/junit5/docs/current/user-guide/)
+- [Mockito](https://site.mockito.org)
+- [AssertJ](https://github.com/assertj/assertj)
+- [Hamcrest](http://hamcrest.org/JavaHamcrest/)
+- [Jacoco](https://github.com/jacoco/jacoco)
+- [Pitest](https://pitest.org)
 
-    </excludes>
-  </configuration>
-  <executions>
-    <execution>
-      <goals>
-        <goal>prepare-agent</goal>
-      </goals>
-    </execution>
-  <execution>
-    <id>report</id>
-    <phase>prepare-package</phase>
-    <goals>
-      <goal>report</goal>
-    </goals>
-  </execution>
-</plugin>
-````
+## 💻 Projeto
 
-### Run test and generate report
-``.\mvnw clean test jacoco:report``
+sw-planet-api é um serviço web que provê dados sobre a franquia de Star Wars, mais especificamente sobre os planetas que aparecem nos filmes.
 
-### How to exclude a method from the report
-Sometimes a method is not used during the execution of a app, it may be for debugging purposes like the toString
+Esse projeto foi elaborado durante o curso [Testes automatizados na prática com Spring Boot](https://www.udemy.com/course/testes-automatizados-na-pratica-com-spring-boot/?referralCode=7F6C5AA14AE558497FE0), em que o foco foi a criação de testes automatizados.
 
-To exclude the method from the analysis you can create the annotation and use it in the method you want to use
-````java
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ExcludeFromJacocoGeneratedReport {
-}
-````
+## 🛠️ Configuração
 
-# Mutant tests with pitest
+O projeto requer um banco de dados Mysql, então é necessário criar uma base de dados com os seguintes comandos:
 
-### Configuration
-```xml
-<!--Working with mutant tests-->
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.8.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.pitest</groupId>
-						<artifactId>pitest-junit5-plugin</artifactId>
-						<version>0.14</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<targetTests>
-						<param>com.kennedy.demo_auto_test.*Test</param>
-					</targetTests>
-					<excludedClasses>
-                      <param>com.kennedy.demo_auto_test.domain.Planet</param>
-					</excludedClasses>
-				</configuration>
-			</plugin>
+```
+$ sudo mysql
+
+CREATE USER 'user'@'%' IDENTIFIED BY '123456';
+GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
+
+exit
+
+$ mysql -u user -p
+
+CREATE DATABASE starwars;
+
+exit
 ```
 
-### Command
-``.\mvnw test-compile org.pitest:pitest-maven:mutationCoverage``
+Durante os testes, as tabelas de banco já serão criadas automaticamente no banco de dados.
+
+## 🚀 Construir e Executar
+
+Para construir e testar, execute o comando:
+
+```sh
+$ ./mvnw clean verify
+```
